@@ -132,6 +132,10 @@ unsigned long lastRepeaterHeardMillis = 0;
 volatile bool pendingHistoryPush = false;
 char pendingHistoryMsg[64] = "";
 
+// --- NEW FEATURE: MOTOR RUNTIME COUNTDOWN VARIABLES ---
+unsigned long motorStartTime = 0;
+long activeMotorRuntimeSeconds = 0; 
+
 struct SavedAP {
   String ssid;
   String pass;
@@ -240,6 +244,7 @@ void triggerCommsSafetyShutdown(int faultType) {
     pumpActive = false;
     filterInitialized = false; 
     synchronizationWindowActive = false;
+    activeMotorRuntimeSeconds = 0; // NEW: Reset timer on critical fault
     
     currentWaterPercent = 0.0;
     currentWaterCm = 0.0;
@@ -552,6 +557,10 @@ void firebaseSyncTask(void *pvParameters) {
           json.set("state/fault", commsFaultActive);
           json.set("state/pumpActive", pumpActive);
           json.set("state/automationBypassed", automationBypassed);
+          
+          // --- NEW FEATURE: SYNC RUNTIME TO CLOUD ---
+          json.set("state/pumpRuntimeSecs", activeMotorRuntimeSeconds);
+          
           Firebase.RTDB.updateNode(&fbdo, basePath, &json);
       }
 
@@ -702,6 +711,7 @@ void firebaseSyncTask(void *pvParameters) {
                               digitalWrite(led_relay_status, LOW); 
                               digitalWrite(led_signal_status, LOW);
                               pumpActive = false;
+                              activeMotorRuntimeSeconds = 0; // NEW: Reset timer on OTA
                               
                               // --- CRITICAL FIX: PUSH OTA MODE TO DASHBOARD AND WAIT FOR TX ---
                               Firebase.RTDB.setBool(&fbdo, basePath + "/state/otaMode", true);
@@ -952,6 +962,19 @@ void loop() {
 
   unsigned long currentMillis = millis();
   
+  // --- NEW FEATURE: MOTOR RUNTIME LOGIC ---
+  if (pumpActive && !commsFaultActive) {
+      if (motorStartTime == 0) {
+          motorStartTime = currentMillis; // Start counting when pump turns on
+      } else {
+          activeMotorRuntimeSeconds = (currentMillis - motorStartTime) / 1000;
+      }
+  } else {
+      motorStartTime = 0;
+      activeMotorRuntimeSeconds = 0; // Reset when off
+  }
+  // -----------------------------------------
+
   static int lastButtonState = HIGH;
   static int buttonState = HIGH;
   static unsigned long lastDebounceTime = 0;
