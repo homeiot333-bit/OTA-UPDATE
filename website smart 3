@@ -216,7 +216,7 @@
             display: flex;
             align-items: flex-start; 
             justify-content: center;
-            margin: 20px auto;
+            margin: 0px auto 20px auto;
             position: relative;
             padding-left: 10px; 
         }
@@ -768,6 +768,105 @@
                 height: 100px; 
             }
         }
+
+        /* --- MINIMAL ROUND TIMER STYLES --- */
+        .sleek-timer-badge {
+            background: rgba(20, 25, 35, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px; 
+            padding: 6px 16px; 
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 25px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .sleek-timer-badge.active {
+            border-color: rgba(46, 213, 115, 0.5);
+            box-shadow: 0 0 15px rgba(46, 213, 115, 0.2);
+        }
+
+        .timer-icon-wrap {
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .sleek-timer-badge.active .timer-icon-wrap {
+            background: rgba(46, 213, 115, 0.2);
+        }
+
+        .timer-icon {
+            font-size: 13px;
+        }
+
+        .sleek-timer-badge.active .timer-icon {
+            animation: pulse-green 1.5s infinite;
+        }
+
+        .timer-info-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding-right: 12px;
+            margin-right: 12px;
+        }
+
+        .timer-header {
+            font-size: 9px;
+            color: #aaa;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .sleek-timer-badge.active .timer-header {
+            color: #2ed573;
+        }
+
+        .timer-date {
+            font-size: 9px;
+            color: #777;
+            margin-top: 2px;
+            white-space: nowrap;
+        }
+
+        .timer-time {
+            color: #fff;
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .sleek-timer-badge.active .timer-time {
+            color: #7bed9f;
+            text-shadow: 0 0 8px rgba(123, 237, 159, 0.3);
+        }
+
+        .sleek-admin-timer {
+            display: flex;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            padding: 4px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes pulse-green {
+            0% { text-shadow: 0 0 2px #2ed573; transform: scale(1); }
+            50% { text-shadow: 0 0 10px #2ed573; transform: scale(1.3); }
+            100% { text-shadow: 0 0 2px #2ed573; transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -925,11 +1024,25 @@
                     <button class="btn-login" style="background:#2ed573; color:black; margin-top:15px;" onclick="saveCustomerSettings()">Save Settings to Device</button>
                 </div>
 
-                <div class="card">
-                    <span id="connStatus" class="status-badge">ONLINE</span>
-                    <div id="customerMenuDots" class="menu-dots" onclick="toggleAdvanced()" title="Show/Hide Advanced Data" style="display:none; top: 15px; right: 20px;">⋮</div>
+                <div class="card" style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <span id="connStatus" class="status-badge">ONLINE</span>
+                        <div id="customerMenuDots" class="menu-dots" onclick="toggleAdvanced()" title="Show/Hide Advanced Data" style="display:none; top: 15px; right: 20px;">⋮</div>
+                    </div>
                     
                     <div style="clear:both;"></div>
+
+                    <!-- --- MINIMAL WIDGET (ABOVE TANK) --- -->
+                    <div id="customerTimerBadge" class="sleek-timer-badge">
+                        <div class="timer-icon-wrap">
+                            <span class="timer-icon">⚡</span>
+                        </div>
+                        <div class="timer-info-col">
+                            <span id="customerTimerTitle" class="timer-header">LAST RUN TIME</span>
+                            <span id="customerTimerDate" class="timer-date">Waiting for data...</span>
+                        </div>
+                        <span id="customerTimerText" class="timer-time">00:00:00</span>
+                    </div>
                     
                     <div id="waterTankModel" class="system-wrapper">
                         <div class="motor-assembly">
@@ -1030,17 +1143,17 @@
             </div>
 
             <div class="dash-col-right" id="adminCommandCenter" style="display:none;">
-                <div class="card" style="width:100%; border: 2px solid rgba(0, 210, 255, 0.5); position: relative;">
+                <div class="card" style="width:100%; border: 2px solid rgba(0, 210, 255, 0.5); position: relative; display: flex; flex-direction: column; align-items: center;">
                     
                     <div class="menu-dots" onclick="toggleSearchMenu()" title="Search Options" style="top: 20px; right: 20px;">⋮</div>
                     
-                    <h2>👑 Master Command Center</h2>
+                    <h2 style="align-self: flex-start;">👑 Master Command Center</h2>
 
-                    <button class="btn-login" style="background:rgba(0, 210, 255, 0.8); color:#fff; margin-top:10px; margin-bottom:10px; font-size:14px; padding:10px;" onclick="toggleAdminPumpControl()">👁️ Show/Hide Pump Control</button>
+                    <button class="btn-login" style="background:rgba(0, 210, 255, 0.8); color:#fff; margin-top:10px; margin-bottom:10px; font-size:14px; padding:10px; width: 100%;" onclick="toggleAdminPumpControl()">👁️ Show/Hide Pump Control</button>
                     
-                    <button class="btn-login" style="background:rgba(254, 202, 87, 0.9); color:#000; margin-top:0px; margin-bottom:10px; font-size:14px; padding:10px;" onclick="toggleInboxPanel()">🔔 Open Global Alerts Inbox</button>
+                    <button class="btn-login" style="background:rgba(254, 202, 87, 0.9); color:#000; margin-top:0px; margin-bottom:10px; font-size:14px; padding:10px; width: 100%;" onclick="toggleInboxPanel()">🔔 Open Global Alerts Inbox</button>
 
-                    <button class="btn-login" style="background:rgba(156, 136, 255, 0.9); color:#fff; margin-top:0px; margin-bottom:20px; font-size:14px; padding:10px;" onclick="changeMasterPin()">🔐 Change Master PIN</button>
+                    <button class="btn-login" style="background:rgba(156, 136, 255, 0.9); color:#fff; margin-top:0px; margin-bottom:20px; font-size:14px; padding:10px; width: 100%;" onclick="changeMasterPin()">🔐 Change Master PIN</button>
 
                     <div id="searchMenuDropdown" style="display:none; position:absolute; right:20px; top:50px; background:rgba(20, 25, 35, 0.95); border:1px solid #00d2ff; border-radius:8px; padding:12px; z-index:100; box-shadow: 0 8px 25px rgba(0,0,0,0.8); backdrop-filter: blur(10px); min-width: 160px;">
                         <label style="color:#fff; font-size:13px; cursor:pointer;"><input type="radio" name="searchMode" value="devId" checked onchange="updateSearchPlaceholder()"> Search by Device ID</label><br>
@@ -1048,16 +1161,27 @@
                     </div>
 
                     <input type="text" id="adminSearchInput" class="input-box" placeholder="e.g., a4e1 (MAC)">
-                    <button class="btn-login" onclick="processAdminConnection()" style="margin-top:10px;">Connect to Machine</button>
+                    <button class="btn-login" onclick="processAdminConnection()" style="margin-top:10px; width: 100%;">Connect to Machine</button>
                     
                     <div id="adminTerminalContainer" style="display:none; width:100%; margin-top:20px;">
                         <hr style="border: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
                         
                         <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px; background:rgba(0,0,0,0.4); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.05); position:relative;">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
-                                <h3 style="color: #fff; font-size: 15px; margin:0; text-align:left;">Live Diagnostics: <span id="termDevId"></span></h3>
+                                <div style="display:flex; flex-direction:column; gap:4px;">
+                                    <h3 style="color: #fff; font-size: 15px; margin:0; text-align:left;">Live Diagnostics: <span id="termDevId"></span></h3>
+                                </div>
                                 
                                 <div style="display:flex; gap:12px; align-items:center;">
+                                    <!-- --- MINIMAL INLINE ADMIN TIMER --- -->
+                                    <div id="adminTimerBadge" class="sleek-admin-timer">
+                                        <div style="display:flex; flex-direction:column; align-items:flex-end; padding-right:8px; border-right:1px solid rgba(255,255,255,0.1); margin-right:8px;">
+                                            <span id="adminTimerTitle" style="font-size:9px; color:#aaa; font-weight:bold; letter-spacing:0.5px;">LAST RUN</span>
+                                            <span id="adminTimerDate" style="font-size:8px; color:#777; margin-top:2px;">Waiting...</span>
+                                        </div>
+                                        <span id="adminTimerText" style="font-size:14px; color:#fff; font-family:monospace; font-weight:bold;">00:00:00</span>
+                                    </div>
+
                                     <button class="btn-login" style="background:rgba(254, 202, 87, 0.8); color:#000; font-size:11px; padding:4px 8px; margin:0; width:auto;" onclick="toggleAdminEditConfig()">✏️ Edit Config</button>
                                     <span id="txtRuntimeDays" style="background:rgba(0,210,255,0.15); color:#00d2ff; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:bold; border:1px solid rgba(0,210,255,0.3);">-- Days</span>
                                     <span style="cursor:pointer; color:#00d2ff; font-weight:bold; font-size:20px; user-select:none;" onclick="toggleCredBox()" title="View Credentials">⋮</span>
@@ -1244,9 +1368,9 @@
                             <div id="hwTerminalPanel" style="display:none; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; color: #feca57; text-align:left; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); white-space: pre-wrap;">Awaiting Cloud Sync...</div>
                         </div>
 
-                        <!-- --- LAST 5 PUMP ACTIONS HISTORY (ADMIN ONLY) --- -->
+                        <!-- --- FIXED: EXACTLY 2 PUMP ACTIONS (DB ONLY) --- -->
                         <div style="margin-top: 15px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                            <h3 style="text-align: left; margin-bottom: 10px; color: #7bed9f; font-size: 14px;">🚰 Last 5 Pump Actions</h3>
+                            <h3 style="text-align: left; margin-bottom: 10px; color: #7bed9f; font-size: 14px;">🚰 Last 2 Pump Actions</h3>
                             <div id="adminPumpHistoryList" style="font-size: 12px; color: #ccc;">Awaiting history fetch...</div>
                         </div>
 
@@ -1323,11 +1447,45 @@
         window.dbLastConnect = "--";
         window.dbLastDisconnect = "--";
         window.knownNetworkSlots = []; 
-        window.lastProcessedSysEvent = ""; 
         window.lastKnownHeartbeat = -1; 
         window.liveHeartbeatReceived = false; 
 
-        // Global function to securely lock in Active WiFi without ever clearing it to blank
+        let currentDeviceId = null;
+        let currentPumpState = false;
+        
+        let lastHeartbeat = 0;
+        let lastHeartbeatTime = 0; 
+        let prevOnlineState = null;
+
+        let espLogHistory = [];
+        let lastWaterPercent = -1;
+        let localDailyUsage = 0;
+        let hasShownPopup = false;
+        
+        let localPumpCommandTimeout = null; 
+        let lastSeenControlTrigger = null;
+        let lastCommandedState = false; 
+
+        let isOtaMode = false;
+
+        window.manualRadioTech = null;
+        window.manualRadioChan = null;
+        window.manualRadioRate = null;
+        window.autoRadioTech = null;
+        window.autoRadioChan = null;
+        window.autoRadioRate = null;
+        window.deviceDeployDate = null; 
+        window.deviceTopology = null; 
+        window.latestRawDistance = null; 
+
+        // --- PERSISTENT RUNTIME VARIABLES ---
+        window.pumpTimerInterval = null;
+        window.maxRunSecs = 0;
+        window.lastSavedRuntime = 0;
+        window.lastSavedRunDate = "Waiting for data...";
+        window.isFirstStateLoad = true;
+
+        // Global function to securely lock in Active WiFi
         function updateActiveWifiDisplay(ssid) {
             if (!ssid || typeof ssid !== 'string') return;
             let cleanSsid = ssid.trim();
@@ -1344,91 +1502,81 @@
             if(document.getElementById('adminTxtActiveWifi')) document.getElementById('adminTxtActiveWifi').innerText = window.activeHotspotName;
         }
 
-        // --- NEW: BULLETPROOF PUMP HISTORY ENGINE ---
-        function updatePumpHistory(sysEvent) {
-            if (!sysEvent || !currentDeviceId || !window.liveHeartbeatReceived) return;
-            
-            // Aggressive string matching for any pump action
-            if (!sysEvent.match(/(Pump ON|Pump OFF|Pump shutdown|Auto-Fill Active)/i)) return;
+        // --- TIMER FORMATTER ---
+        function formatRuntime(totalSeconds) {
+            if (!totalSeconds || isNaN(totalSeconds) || totalSeconds <= 0) return "00:00:00";
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = Math.floor(totalSeconds % 60);
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
 
-            // --- INSTANT OPTIMISTIC UI RENDER (Zero Latency) ---
+        // --- NEW PURE READ-ONLY TIMER UI FUNCTION ---
+        function updateTimerUI(isRunning, seconds, dateStr) {
+            let displayTime = formatRuntime(seconds);
+
+            const custBadge = document.getElementById('customerTimerBadge');
+            const adminBadge = document.getElementById('adminTimerBadge');
+            const custText = document.getElementById('customerTimerText');
+            const adminText = document.getElementById('adminTimerText');
+            const custDate = document.getElementById('customerTimerDate');
+            const adminDate = document.getElementById('adminTimerDate');
+            const custTitle = document.getElementById('customerTimerTitle');
+            const adminTitle = document.getElementById('adminTimerTitle');
+
+            if (custBadge && custText && custDate && custTitle) {
+                if (isRunning) {
+                    custBadge.classList.add('active');
+                    custTitle.innerText = "PUMP RUNNING";
+                    custDate.innerText = "Live";
+                } else {
+                    custBadge.classList.remove('active');
+                    custTitle.innerText = "LAST RUN TIME";
+                    custDate.innerText = dateStr;
+                }
+                custText.innerText = displayTime;
+            }
+
+            if (adminBadge && adminText && adminDate && adminTitle) {
+                if (isRunning) {
+                    adminBadge.style.borderColor = "rgba(46, 213, 115, 0.6)";
+                    adminTitle.style.color = "#2ed573";
+                    adminText.style.color = "#7bed9f";
+                    adminTitle.innerHTML = `<span style="animation: pulse-green 1.5s infinite;">⚡</span> RUNNING`;
+                    adminDate.innerText = "Live";
+                } else {
+                    adminBadge.style.borderColor = "rgba(255, 255, 255, 0.05)";
+                    adminTitle.style.color = "#aaa";
+                    adminText.style.color = "#fff";
+                    adminTitle.innerText = "LAST RUN TIME";
+                    adminDate.innerText = dateStr;
+                }
+                adminText.innerText = displayTime;
+            }
+        }
+
+        // --- INSTANT OPTIMISTIC UI FOR HISTORY (SAFELY APPENDS ONLY) ---
+        function insertOptimisticHistory(sysEvent) {
             const listEl = document.getElementById('adminPumpHistoryList');
             if (listEl) {
-                // Only inject if it's not already at the very top to avoid flicker
-                if (!listEl.innerHTML.substring(0, 150).includes(sysEvent)) {
-                    let color = (sysEvent.includes("OFF") || sysEvent.includes("shutdown")) ? "#ff4757" : "#2ed573";
-                    let icon = sysEvent.includes("WEB") ? "🌐" : sysEvent.includes("MANUAL") ? "👆" : "🤖";
-                    let timeNow = new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, month: 'short', day: 'numeric' });
-                    
-                    let instantHtml = `<div style="border-left: 3px solid ${color}; padding-left: 8px; margin-bottom: 6px; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px;">
-                        <div style="color:${color}; font-weight:bold; font-size:11px;">${icon} ${timeNow}</div>
-                        <div style="color:#fff; font-size:11px; margin-top:2px;">${sysEvent}</div>
-                    </div>`;
-                    
-                    if (listEl.innerHTML.includes("Awaiting") || listEl.innerHTML.includes("No pump history")) {
-                        listEl.innerHTML = instantHtml;
-                    } else {
-                        listEl.insertAdjacentHTML('afterbegin', instantHtml);
+                let color = (sysEvent.includes("Stopped") || sysEvent.includes("OFF")) ? "#ff4757" : "#2ed573";
+                let timeNow = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+                
+                let instantHtml = `<div style="border-left: 3px solid ${color}; padding-left: 8px; margin-bottom: 6px; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px; opacity: 0.7;">
+                    <div style="color:${color}; font-weight:bold; font-size:11px;">🌐 ${timeNow} ⏳</div>
+                    <div style="color:#fff; font-size:11px; margin-top:2px;">${sysEvent} (Sending...)</div>
+                </div>`;
+                
+                if (listEl.innerHTML.includes("Awaiting") || listEl.innerHTML.includes("No pump history")) {
+                    listEl.innerHTML = instantHtml;
+                } else {
+                    listEl.insertAdjacentHTML('afterbegin', instantHtml);
+                    // Strictly keep it visually at 2 items during fast clicking
+                    if (listEl.children.length > 2) {
+                        listEl.removeChild(listEl.lastElementChild);
                     }
                 }
             }
-
-            let histRef = database.ref('/Devices/' + currentDeviceId + '/pumpHistory');
-            
-            // Secure atomic transaction to prevent rapid double-clicks from corrupting the DB
-            histRef.transaction(function(currentData) {
-                if (currentData === null) currentData = {};
-                let items = Object.keys(currentData).map(k => ({key: k, data: currentData[k]}));
-                items.sort((a,b) => a.data.ms - b.data.ms);
-                
-                // Cross-Browser Deduplicator: Check if the exact text was just submitted recently
-                if (items.length > 0) {
-                    let lastItem = items[items.length - 1].data;
-                    if (lastItem.text === sysEvent) {
-                        if (Date.now() - lastItem.ms < 5000) {
-                            return; // Reject false duplicate
-                        }
-                    }
-                }
-
-                let newKey = histRef.push().key;
-                currentData[newKey] = {
-                    text: sysEvent,
-                    time: new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, month: 'short', day: 'numeric' }),
-                    ms: Date.now()
-                };
-
-                // Instant Pruning (Keep exactly 5)
-                items = Object.keys(currentData).map(k => ({key: k, data: currentData[k]}));
-                items.sort((a,b) => a.data.ms - b.data.ms);
-                while(items.length > 5) {
-                    delete currentData[items[0].key];
-                    items.shift();
-                }
-
-                return currentData;
-            }, function(error, committed, snapshot) {
-                if(committed) {
-                    // Firebase Confirmation Render
-                    let html = "";
-                    let items = [];
-                    snapshot.forEach(c => items.push(c.val()));
-                    items.sort((a,b) => b.ms - a.ms); 
-                    
-                    items.forEach(item => {
-                        let color = (item.text.includes("OFF") || item.text.includes("shutdown")) ? "#ff4757" : "#2ed573";
-                        let icon = item.text.includes("WEB") ? "🌐" : item.text.includes("MANUAL") ? "👆" : "🤖";
-                        html += `<div style="border-left: 3px solid ${color}; padding-left: 8px; margin-bottom: 6px; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px;">
-                            <div style="color:${color}; font-weight:bold; font-size:11px;">${icon} ${item.time}</div>
-                            <div style="color:#fff; font-size:11px; margin-top:2px;">${item.text}</div>
-                        </div>`;
-                    });
-                    if (items.length === 0) html = "<div style='font-size:11px; color:#aaa;'>No pump history available yet.</div>";
-                    
-                    const listEl = document.getElementById('adminPumpHistoryList');
-                    if(listEl) listEl.innerHTML = html;
-                }
-            });
         }
 
         function processAndFormatLog(logText, isHardware = false) {
@@ -1472,7 +1620,6 @@
             return formattedOutput.join('');
         }
 
-        // --- DYNAMIC CONNECTION RENDERER ---
         function updateConnectionUI(isOnline) {
             if (document.getElementById('adminTxtLastConnect')) {
                 document.getElementById('adminTxtLastConnect').innerText = window.dbLastConnect;
@@ -1542,34 +1689,6 @@
         let heartbeatTimer = null; 
         let globalScannerTimer = null; 
         let linkedDevicesRef = null;
-
-        let currentDeviceId = null;
-        let currentPumpState = false;
-        let lastHeartbeat = 0;
-        let lastHeartbeatTime = 0; 
-        
-        let prevOnlineState = null;
-
-        let espLogHistory = [];
-        let lastWaterPercent = -1;
-        let localDailyUsage = 0;
-        let hasShownPopup = false;
-        
-        let localPumpCommandTimeout = null; 
-        let lastSeenControlTrigger = null;
-        let lastCommandedState = false; 
-
-        let isOtaMode = false;
-
-        window.manualRadioTech = null;
-        window.manualRadioChan = null;
-        window.manualRadioRate = null;
-        window.autoRadioTech = null;
-        window.autoRadioChan = null;
-        window.autoRadioRate = null;
-        window.deviceDeployDate = null; 
-        window.deviceTopology = null; 
-        window.latestRawDistance = null; 
 
         function showModal({ title, text, type, showInput }) {
             return new Promise((resolve) => {
@@ -2298,10 +2417,15 @@
                 database.ref('/Devices/' + currentDeviceId + '/networkSlots').off();
                 database.ref('/Devices/' + currentDeviceId + '/connectionHistory').off();
                 database.ref('/Devices/' + currentDeviceId + '/mobileLogins').off();
+                
                 database.ref('/Devices/' + currentDeviceId + '/pumpHistory').off();
             }
 
             if (heartbeatTimer) clearInterval(heartbeatTimer);
+            if (window.pumpTimerInterval) {
+                clearInterval(window.pumpTimerInterval);
+                window.pumpTimerInterval = null;
+            }
             
             if(localPumpCommandTimeout) {
                 clearTimeout(localPumpCommandTimeout);
@@ -2325,14 +2449,19 @@
             window.autoRadioTech = null;
             window.autoRadioChan = null;
             window.autoRadioRate = null;
-            window.deviceDeployDate = null;
-            window.deviceTopology = null;
-            window.latestRawDistance = null;
+            window.deviceDeployDate = null; 
+            window.deviceTopology = null; 
+            window.latestRawDistance = null; 
             
-            // --- STRICT OFFLINE START: Zero False Triggers ---
+            // --- CLEAR VARIABLES BEFORE LOAD ---
+            window.maxRunSecs = 0;
+            window.lastSavedRuntime = 0;
+            window.lastSavedRunDate = "Waiting for data...";
+            window.isFirstStateLoad = true;
+            
+            // --- STRICT OFFLINE START ---
             window.lastKnownHeartbeat = -1; 
             window.liveHeartbeatReceived = false;
-            window.lastProcessedSysEvent = ""; 
             lastHeartbeatTime = 0; 
             
             window.activeHotspotName = "--";
@@ -2444,22 +2573,77 @@
             // --- REATTACH LISTENERS ---
             startListeners();
             
-            // FORCE FETCH ONCE TO POPULATE LIST
-            database.ref('/Devices/' + currentDeviceId + '/pumpHistory').once('value').then(snap => {
+            // --- FIXED: CALCULATE RUNTIME FROM HISTORY TO PREVENT 00:00 BUG ---
+            database.ref('/Devices/' + currentDeviceId + '/pumpHistory').limitToLast(20).on('value', snap => {
                 let html = "";
                 let items = [];
-                snap.forEach(c => items.push(c.val()));
-                items.sort((a,b) => b.ms - a.ms); 
                 
-                items.forEach(item => {
-                    let color = (item.text.includes("OFF") || item.text.includes("shutdown")) ? "#ff4757" : "#2ed573";
-                    let icon = item.text.includes("WEB") ? "🌐" : item.text.includes("MANUAL") ? "👆" : "🤖";
+                snap.forEach(c => {
+                    let val = c.val();
+                    if(val && val.text && val.time) {
+                        items.push(val);
+                    }
+                });
+                
+                // Sort chronologically (oldest to newest) to do accurate math
+                items.sort((a,b) => (a.ms || 0) - (b.ms || 0));
+
+                let calcRunSecs = 0;
+                let calcDateStr = "Waiting for data...";
+                let foundOff = false;
+                
+                // Scan backwards to find the exact last OFF event and its matching ON event
+                for(let i = items.length - 1; i >= 0; i--) {
+                    let txt = items[i].text || "";
+                    if (!foundOff && (txt.includes("OFF") || txt.includes("shutdown") || txt.includes("Stopped"))) {
+                        foundOff = true;
+                        let offMs = items[i].ms || 0;
+                        if(offMs > 0) {
+                            calcDateStr = "Ended: " + (items[i].time || "");
+                        }
+                        
+                        for (let j = i - 1; j >= 0; j--) {
+                            let pTxt = items[j].text || "";
+                            if (pTxt.includes("ON") || pTxt.includes("Auto-Fill Active")) {
+                                let onMs = items[j].ms || 0;
+                                if (onMs > 0 && offMs >= onMs) {
+                                    calcRunSecs = Math.floor((offMs - onMs) / 1000);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // If pump is offline, push this precise historical duration to the UI
+                if (!currentPumpState && calcRunSecs > 0) {
+                    window.lastSavedRuntime = calcRunSecs;
+                    window.lastSavedRunDate = calcDateStr;
+                    updateTimerUI(false, window.lastSavedRuntime, window.lastSavedRunDate);
+                }
+
+                // Reverse for UI display (Newest at top)
+                items.reverse();
+                
+                // Strictly slice array to ensure only 2 are displayed
+                let displayItems = items.slice(0, 2);
+                
+                displayItems.forEach(item => {
+                    let textStr = item.text || "";
+                    let realWorldTime = item.time || ""; 
+                    
+                    let color = (textStr.includes("Stopped") || textStr.includes("OFF") || textStr.includes("shutdown")) ? "#ff4757" : "#2ed573";
+                    let icon = (textStr.includes("Web") || textStr.includes("WEB") || textStr.includes("Cloud") || textStr.includes("Sent") || textStr.includes("Sending")) ? "🌐" : (textStr.includes("Manual") || textStr.includes("Override")) ? "👆" : "🤖";
+                    
                     html += `<div style="border-left: 3px solid ${color}; padding-left: 8px; margin-bottom: 6px; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px;">
-                        <div style="color:${color}; font-weight:bold; font-size:11px;">${icon} ${item.time}</div>
-                        <div style="color:#fff; font-size:11px; margin-top:2px;">${item.text}</div>
+                        <div style="color:${color}; font-weight:bold; font-size:11px;">${icon} ${realWorldTime}</div>
+                        <div style="color:#fff; font-size:11px; margin-top:2px;">${textStr}</div>
                     </div>`;
                 });
-                if (items.length === 0) html = "<div style='font-size:11px; color:#aaa;'>No pump history available yet.</div>";
+                
+                if (displayItems.length === 0) {
+                    html = "<div style='font-size:11px; color:#aaa;'>No pump history available yet.</div>";
+                }
                 
                 const listEl = document.getElementById('adminPumpHistoryList');
                 if(listEl) listEl.innerHTML = html;
@@ -2715,27 +2899,6 @@
                 if(document.getElementById('adminMobileLoginsList')) document.getElementById('adminMobileLoginsList').innerHTML = finalHtml;
             });
 
-            // --- RENDER DEDICATED PUMP HISTORY ---
-            database.ref(basePath + '/pumpHistory').on('value', snap => {
-                let html = "";
-                let items = [];
-                snap.forEach(c => items.push(c.val()));
-                items.sort((a,b) => b.ms - a.ms); 
-                
-                items.forEach(item => {
-                    let color = (item.text.includes("OFF") || item.text.includes("shutdown")) ? "#ff4757" : "#2ed573";
-                    let icon = item.text.includes("WEB") ? "🌐" : item.text.includes("MANUAL") ? "👆" : "🤖";
-                    html += `<div style="border-left: 3px solid ${color}; padding-left: 8px; margin-bottom: 6px; background: rgba(255,255,255,0.02); padding: 6px; border-radius: 4px;">
-                        <div style="color:${color}; font-weight:bold; font-size:11px;">${icon} ${item.time}</div>
-                        <div style="color:#fff; font-size:11px; margin-top:2px;">${item.text}</div>
-                    </div>`;
-                });
-                if (items.length === 0) html = "<div style='font-size:11px; color:#aaa;'>No pump history available yet.</div>";
-                
-                const listEl = document.getElementById('adminPumpHistoryList');
-                if(listEl) listEl.innerHTML = html;
-            });
-
             database.ref(basePath + '/networkSlots').on('value', (snapshot) => {
                 const slots = snapshot.val();
                 window.knownNetworkSlots = []; 
@@ -2820,7 +2983,6 @@
                     }
                     
                     updateRadioUI();
-                    updateRuntimeUI();
                 } else {
                     document.getElementById('assignedNameDisplay').innerText = "";
                     window.manualRadioTech = null;
@@ -2842,7 +3004,6 @@
                     if (nanoTitle) nanoTitle.innerText = "NANO (TANK)";
 
                     updateRadioUI();
-                    updateRuntimeUI();
                 }
             });
 
@@ -2905,7 +3066,20 @@
                 
                 let isCurrentlyOnline = (lastHeartbeatTime > 0 && (Date.now() - lastHeartbeatTime <= 35000));
                 updateConnectionUI(isCurrentlyOnline);
-                updateRuntimeUI();
+                
+                // Also update the uptime label here
+                if (window.deviceDeployDate) {
+                    let deployed = new Date(window.deviceDeployDate);
+                    let diffTime = Math.abs(Date.now() - deployed.getTime());
+                    let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    document.getElementById('txtRuntimeDays').innerText = `Running: ${diffDays} Days`;
+                } else if (lastHeartbeatTime > 0) {
+                    let totalSeconds = Math.floor(hb * 1.5);
+                    let runningDays = Math.floor(totalSeconds / 86400);
+                    document.getElementById('txtRuntimeDays').innerText = `Uptime: ${runningDays} Days`;
+                } else {
+                    document.getElementById('txtRuntimeDays').innerText = '-- Days';
+                }
 
                 if (document.getElementById('logConsole').innerText.includes("Connection lost")) {
                     document.getElementById('logConsole').innerText = "Signal restored. Fetching logs...";
@@ -3020,7 +3194,7 @@
                         localPumpCommandTimeout = setTimeout(async () => {
                             if (!navigator.onLine) return;
                             updatePumpButtonUI();
-                        }, 12000); // FIXED: Kept exactly at 12 seconds
+                        }, 12000); 
                     }
                 }
             });
@@ -3098,13 +3272,9 @@
                     }
                     lastWaterPercent = currentPct;
 
+                    // WARNING: TERMINAL SCRAPING COMPLETELY REMOVED FROM HERE
                     if(data.log) {
                         let logLines = data.log.split('\n');
-                        let sysEvent = logLines.find(l => l.startsWith('>> '));
-                        if (sysEvent) {
-                            sysEvent = sysEvent.replace('>> ', '').trim();
-                            updatePumpHistory(sysEvent); // PUMP ENGINE IS NOW BULLETPROOF
-                        }
 
                         let allLogs = (data.log || "") + " " + (data.nanoLog || "") + " " + (data.hardwareLog || "");
                         let foundWifi = false;
@@ -3201,6 +3371,42 @@
                         updateActiveWifiDisplay(activeHotspot);
                     }
 
+                    if (window.isFirstStateLoad) {
+                        window.isFirstStateLoad = false;
+                    }
+
+                    if (state.pumpActive) {
+                        let espRunSecs = state.pumpRuntimeSecs || 0;
+                        if (espRunSecs >= window.maxRunSecs) {
+                            window.maxRunSecs = espRunSecs;
+                        }
+                        
+                        if (!window.pumpTimerInterval) {
+                            window.pumpTimerInterval = setInterval(() => {
+                                window.maxRunSecs++;
+                                updateTimerUI(true, window.maxRunSecs, "Live");
+                            }, 1000);
+                        }
+                        updateTimerUI(true, window.maxRunSecs, "Live");
+                        
+                    } else {
+                        if (window.pumpTimerInterval) {
+                            clearInterval(window.pumpTimerInterval);
+                            window.pumpTimerInterval = null;
+                        }
+                        
+                        // Temporarily hold current value on screen until history updates it
+                        if (currentPumpState === true) {
+                            window.lastSavedRuntime = window.maxRunSecs;
+                            updateTimerUI(false, window.lastSavedRuntime, "Waiting for sync...");
+                            window.maxRunSecs = 0;
+                        } else if (window.lastSavedRuntime > 0) {
+                            updateTimerUI(false, window.lastSavedRuntime, window.lastSavedRunDate);
+                        } else {
+                            updateTimerUI(false, 0, "No recent data");
+                        }
+                    }
+
                     if (isCurrentlyOnline) {
                         if(state.fault) {
                             badge.style.background = "#ff4757";
@@ -3276,16 +3482,16 @@
             let optLog = "";
             if (btn.innerText.includes("TURN\nON")) {
                 desiredState = true;
-                optLog = "[WEB COMMAND] -> Pump ON via Cloud.";
+                optLog = "Pump ON (Web Command Sent)";
             } else if (btn.innerText.includes("TURN\nOFF")) {
                 desiredState = false;
-                optLog = "[WEB COMMAND] -> Pump OFF via Cloud.";
+                optLog = "Pump OFF (Web Command Sent)";
             } else {
                 return; 
             }
 
             // --- INSTANT UI TRIGGER FOR HISTORY ---
-            updatePumpHistory(optLog);
+            insertOptimisticHistory(optLog);
 
             // --- STRICT UNTOUCHED PUMP LOGIC WITH 12 SECOND TIMEOUT ---
             btn.innerText = "WAIT...";
@@ -3330,6 +3536,6 @@
                 await customAlert("OTA Upload Started! Keep this page open.");
             }
         }
-    </script>
+    </script> 
 </body>
 </html>
